@@ -37,4 +37,12 @@ else {
         Invoke-WebRequest -URI $dll[0] -OutFile $dll[1]
     }
     Write-Host -ForegroundColor green "finished update`n"
+    #backup d3d11.dll within arcdps-backup by date
+    $arcWebsite = Invoke-WebRequest -Uri "https://www.deltaconnected.com/arcdps/x64/"
+    $arcLastModified = $arcWebsite.ParsedHTML.GetElementsByClassName('indexcollastmod')[2].innerText.Replace(":","-").Split(" ")
+    $backupPath = $folder+"arcdps-backup\"+$arcLastModified[0]+"_"+$arcLastModified[1]+"\"
+    New-Item -ItemType Directory -Force -Path $backupPath
+    Copy-Item $pathArcDps -Destination $backupPath
 }
+#start the game
+Start-Process -FilePath “Gw2-64.exe”
